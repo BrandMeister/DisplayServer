@@ -1,5 +1,5 @@
 /*
-*   Copyright (C) 2016 by Jonathan Naylor G4KLX
+*   Copyright (C) 2016,2020 by Jonathan Naylor G4KLX
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -18,17 +18,33 @@
 
 #pragma once
 
-class ISerialPort {
+#include "Timer.h"
+#include "Conf.h"
+#include "DMRLookup.h"
+#include "Display.h"
+
+#include <cstdio>
+#include <string>
+#include <vector>
+
+#include <netdb.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+class CDisplayServer
+{
 public:
-	virtual ~ISerialPort() = 0;
+	CDisplayServer(const std::string& file);
+	~CDisplayServer();
 
-	virtual bool open() = 0;
-
-	virtual int read(unsigned char* buffer, unsigned int length) = 0;
-
-	virtual int write(const unsigned char* buffer, unsigned int length) = 0;
-
-	virtual void close() = 0;
+	void run();
 
 private:
+	CConf           m_conf;
+	CDisplay*       m_display;
+	CDMRLookup*     m_dmrLookup;
 };

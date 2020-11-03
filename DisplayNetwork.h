@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2015,2016 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2009-2014,2016,2020 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,24 +18,28 @@
 
 #pragma once
 
-#include <pthread.h>
+#include "UDPSocket.h"
+#include "Timer.h"
 
-class CThread
-{
+#include <cstdint>
+#include <string>
+
+class CDisplayNetwork {
 public:
-  CThread();
-  virtual ~CThread();
+	CDisplayNetwork(const std::string& address, unsigned int port, bool debug);
+	~CDisplayNetwork();
 
-  virtual bool run();
+	bool open();
 
-  virtual void entry() = 0;
+	unsigned int readData(unsigned char* data, unsigned int length, sockaddr_storage& addr, unsigned int& addrLen);
 
-  virtual void wait();
-
-  static void sleep(unsigned int ms);
+	void close();
 
 private:
-  pthread_t m_thread;
-
-  static void* helper(void* arg);
+	CUDPSocket       m_socket;
+	std::string      m_addressStr;
+	sockaddr_storage m_addr;
+        unsigned int     m_addrLen;
+	unsigned short   m_port;
+	bool             m_debug;
 };

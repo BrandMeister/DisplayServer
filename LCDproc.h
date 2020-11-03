@@ -17,8 +17,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(LCDproc_H)
-#define	LCDproc_H
+#pragma once
 
 #include "Display.h"
 #include "Timer.h"
@@ -38,29 +37,11 @@ public:
 protected:
   virtual void setIdleInt();
   virtual void setErrorInt(const char* text);
-  virtual void setLockoutInt();
   virtual void setQuitInt();
-  virtual void setFMInt();
-  
-  virtual void writeDStarInt(const char* my1, const char* my2, const char* your, const char* type, const char* reflector);
-  virtual void writeDStarRSSIInt(unsigned char rssi);
-  virtual void clearDStarInt();
 
   virtual void writeDMRInt(unsigned int slotNo, const std::string& src, bool group, const std::string& dst, const char* type);
   virtual void writeDMRRSSIInt(unsigned int slotNo, unsigned char rssi); 
   virtual void clearDMRInt(unsigned int slotNo);
-
-  virtual void writeFusionInt(const char* source, const char* dest, unsigned char dgid, const char* type, const char* origin);
-  virtual void writeFusionRSSIInt(unsigned char rssi); 
-  virtual void clearFusionInt();
-
-  virtual void writeP25Int(const char* source, bool group, unsigned int dest, const char* type);
-  virtual void writeP25RSSIInt(unsigned char rssi); 
-  virtual void clearP25Int();
-
-  virtual void writeNXDNInt(const char* source, bool group, unsigned int dest, const char* type);
-  virtual void writeNXDNRSSIInt(unsigned char rssi);
-  virtual void clearNXDNInt();
 
   virtual void writePOCSAGInt(uint32_t ric, const std::string& message);
   virtual void clearPOCSAGInt();
@@ -88,5 +69,3 @@ private:
 	int  socketPrintf(int fd, const char *format, ...);
 	void defineScreens();
 };
-
-#endif

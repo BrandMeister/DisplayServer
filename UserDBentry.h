@@ -16,8 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(USERDBENTRY_H)
-#define USERDBENTRY_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -46,5 +45,3 @@ public:
 private:
 	std::unordered_map<std::string, std::string>    m_db;
 };
-
-#endif

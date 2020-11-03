@@ -16,8 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(NETWORKINFO_H)
-#define	NETWORKINFO_H
+#pragma once
 
 class CNetworkInfo {
 public:
@@ -26,7 +25,5 @@ public:
 
 	void getNetworkInterface(unsigned char* info);
 
-private:	
+private:
 };
-
-#endif

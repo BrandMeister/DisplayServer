@@ -16,8 +16,7 @@
 *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#ifndef	DMRLookup_H
-#define	DMRLookup_H
+#pragma once
 
 #include "Thread.h"
 #include "UserDB.h"
@@ -46,5 +45,3 @@ private:
 	class CUserDB   m_table;
 	bool            m_stop;
 };
-
-#endif

@@ -16,8 +16,7 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(USERDB_H)
-#define USERDB_H
+#pragma once
 
 #include "UserDBentry.h"
 #include "Mutex.h"
@@ -39,5 +38,3 @@ private:
 	std::unordered_map<unsigned int, class CUserDBentry>    m_table;
 	CMutex                                                  m_mutex;
 };
-	
-#endif

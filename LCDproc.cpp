@@ -28,27 +28,6 @@
 *    Green 1		0000 0001
 *    Red 16		0001 0000
 *    Yellow 17		0001 0001
-
-*    LED 2 (P25)
-*    Green 2		0000 0010
-*    Red 32		0010 0000
-*    Yellow 34		0010 0010
-
-*    LED 3 (Fusion)
-*    Green 4		0000 0100
-*    Red 64		0100 0000
-*    Yellow 68		1000 0100
-
-*    LED 4 (D-Star)
-*    Green 8		0000 1000
-*    Red 128		1000 0000
-*    Yellow 136		1000 1000
-
-*    LED 5 (NXDN)
-*    Green 16		0001 0000
-*    Red 255		1111 1111
-*    Yellow 255		1111 1111
-
 */
 
 #include "LCDproc.h"
@@ -61,7 +40,6 @@
 #include <clocale>
 #include <ctime>
 
-#if !defined(_WIN32) && !defined(_WIN64)
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -71,9 +49,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdarg.h>
-#else
-#include <ws2tcpip.h>
-#endif
 
 #define BUFFER_MAX_LEN 128
 
@@ -90,11 +65,7 @@ bool           m_connected(false);
 char           m_displayBuffer1[BUFFER_MAX_LEN];
 char           m_displayBuffer2[BUFFER_MAX_LEN];
 
-const unsigned int DSTAR_RSSI_COUNT = 3U;		// 3 * 420ms = 1260ms
 const unsigned int DMR_RSSI_COUNT   = 4U;		// 4 * 360ms = 1440ms
-const unsigned int YSF_RSSI_COUNT   = 13U;		// 13 * 100ms = 1300ms
-const unsigned int P25_RSSI_COUNT   = 7U;		// 7 * 180ms = 1260ms
-const unsigned int NXDN_RSSI_COUNT  = 28U;		// 28 * 40ms = 1120ms
 
 CLCDproc::CLCDproc(std::string address, unsigned int port, unsigned int localPort, const std::string& callsign, unsigned int dmrid, bool displayClock, bool utc, bool duplex, bool dimOnIdle) :
 CDisplay(),
@@ -183,11 +154,7 @@ void CLCDproc::setIdleInt()
 	m_clockDisplayTimer.start();          // Start the clock display in IDLE only
 
 	if (m_screensDefined) {
-		socketPrintf(m_socketfd, "screen_set DStar -priority hidden");
 		socketPrintf(m_socketfd, "screen_set DMR -priority hidden");
-		socketPrintf(m_socketfd, "screen_set YSF -priority hidden");
-		socketPrintf(m_socketfd, "screen_set P25 -priority hidden");
-		socketPrintf(m_socketfd, "screen_set NXDN -priority hidden");
 		socketPrintf(m_socketfd, "widget_set Status Status %u %u Idle", m_cols - 3, m_rows);
 		socketPrintf(m_socketfd, "output 0");   // Clear all LEDs
 	}
@@ -202,29 +169,8 @@ void CLCDproc::setErrorInt(const char* text)
 	m_clockDisplayTimer.stop();           // Stop the clock display
 
 	if (m_screensDefined) {
-		socketPrintf(m_socketfd, "screen_set DStar -priority hidden");
 		socketPrintf(m_socketfd, "screen_set DMR -priority hidden");
-		socketPrintf(m_socketfd, "screen_set YSF -priority hidden");
-		socketPrintf(m_socketfd, "screen_set P25 -priority hidden");
-		socketPrintf(m_socketfd, "screen_set NXDN -priority hidden");
 		socketPrintf(m_socketfd, "widget_set Status Status %u %u Error", m_cols - 4, m_rows);
-		socketPrintf(m_socketfd, "output 0");   // Clear all LEDs
-	}
-
-	m_dmr = false;
-}
-
-void CLCDproc::setLockoutInt()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	if (m_screensDefined) {
-		socketPrintf(m_socketfd, "screen_set DStar -priority hidden");
-		socketPrintf(m_socketfd, "screen_set DMR -priority hidden");
-		socketPrintf(m_socketfd, "screen_set YSF -priority hidden");
-		socketPrintf(m_socketfd, "screen_set P25 -priority hidden");
-		socketPrintf(m_socketfd, "screen_set NXDN -priority hidden");
-		socketPrintf(m_socketfd, "widget_set Status Status %u %u Lockout", m_cols - 6, m_rows);
 		socketPrintf(m_socketfd, "output 0");   // Clear all LEDs
 	}
 
@@ -238,92 +184,12 @@ void CLCDproc::setQuitInt()
 	m_clockDisplayTimer.stop();           // Stop the clock display
 
 	if (m_screensDefined) {
-		socketPrintf(m_socketfd, "screen_set DStar -priority hidden");
 		socketPrintf(m_socketfd, "screen_set DMR -priority hidden");
-		socketPrintf(m_socketfd, "screen_set YSF -priority hidden");
-		socketPrintf(m_socketfd, "screen_set P25 -priority hidden");
-		socketPrintf(m_socketfd, "screen_set NXDN -priority hidden");
 		socketPrintf(m_socketfd, "widget_set Status Status %u %u Stopped", m_cols - 6, m_rows);
 		socketPrintf(m_socketfd, "output 0");   // Clear all LEDs
 	}
 
 	m_dmr = false;
-}
-
-void CLCDproc::setFMInt()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	if (m_screensDefined) {
-		socketPrintf(m_socketfd, "screen_set DStar -priority hidden");
-		socketPrintf(m_socketfd, "screen_set DMR -priority hidden");
-		socketPrintf(m_socketfd, "screen_set YSF -priority hidden");
-		socketPrintf(m_socketfd, "screen_set P25 -priority hidden");
-		socketPrintf(m_socketfd, "screen_set NXDN -priority hidden");
-		socketPrintf(m_socketfd, "widget_set Status Status %u %u FM", m_cols - 6, m_rows);
-		socketPrintf(m_socketfd, "output 0");   // Clear all LEDs
-	}
-
-	m_dmr = false;
-}
-
-void CLCDproc::writeDStarInt(const char* my1, const char* my2, const char* your, const char* type, const char* reflector)
-{
-	assert(my1 != NULL);
-	assert(my2 != NULL);
-	assert(your != NULL);
-	assert(type != NULL);
-	assert(reflector != NULL);
-
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "screen_set DStar -priority foreground");
-	socketPrintf(m_socketfd, "widget_set DStar Mode 1 1 \"D-Star\"");
-
-	::sprintf(m_displayBuffer1, "%.8s", your);
-
-	char *p = m_displayBuffer1;
-	for (; *p; ++p) {
-		if (*p == ' ')
-			*p = '_';
-	}
-
-	if (strcmp(reflector, "        ") != 0)
-		sprintf(m_displayBuffer2, " via %.8s", reflector);
-	else
-		memset(m_displayBuffer2, 0, BUFFER_MAX_LEN);
-
-	if (m_rows == 2U) {
-		socketPrintf(m_socketfd, "widget_set DStar Line2 1 2 %u 2 h 3 \"%.8s/%.4s to %s%s\"", m_cols - 1, my1, my2, m_displayBuffer1, m_displayBuffer2);
-	} else {
-		socketPrintf(m_socketfd, "widget_set DStar Line2 1 2 %u 2 h 3 \"%.8s/%.4s\"", m_cols - 1, my1, my2);
-		socketPrintf(m_socketfd, "widget_set DStar Line3 1 3 %u 3 h 3 \"%s%s\"", m_cols - 1, m_displayBuffer1, m_displayBuffer2);
-		socketPrintf(m_socketfd, "output 128"); // Set LED4 color red
-	}
-
-	m_dmr = false;
-	m_rssiCount1 = 0U;
-}
-
-void CLCDproc::writeDStarRSSIInt(unsigned char rssi)
-{
-	if (m_rssiCount1 == 0U) {
-		socketPrintf(m_socketfd, "widget_set DStar Line4 1 4 %u 4 h 3 \"-%3udBm\"", m_cols - 1, rssi);
-	}
- 
-	m_rssiCount1++;
- 	if (m_rssiCount1 >= DSTAR_RSSI_COUNT)
- 		m_rssiCount1 = 0U;
-}
-
-void CLCDproc::clearDStarInt()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "widget_set DStar Line2 1 2 15 2 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set DStar Line3 1 3 15 3 h 3 \"\"");
-	socketPrintf(m_socketfd, "widget_set DStar Line4 1 4 15 4 h 3 \"\"");
-	socketPrintf(m_socketfd, "output 8"); // Set LED4 color green
 }
 
 // LED 1 Green 1 Red 16 Yellow 17
@@ -418,142 +284,6 @@ void CLCDproc::clearDMRInt(unsigned int slotNo)
 		socketPrintf(m_socketfd, "widget_set DMR Slot2RSSI %u %u %*.s", (m_cols / 2) + 1, 4, m_cols / 2, "          ");
 	}
 	socketPrintf(m_socketfd, "output 1"); // Set LED1 color green
-}
-
-// LED 3 Green 4 Red 64 Yellow 68
-
-void CLCDproc::writeFusionInt(const char* source, const char* dest, unsigned char dgid, const char* type, const char* origin)
-{
-	assert(source != NULL);
-	assert(dest != NULL);
-	assert(type != NULL);
-	assert(origin != NULL);
-
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "screen_set YSF -priority foreground");
-	socketPrintf(m_socketfd, "widget_set YSF Mode 1 1 \"System Fusion\"");
-
-	if (m_rows == 2U) {
-		socketPrintf(m_socketfd, "widget_set YSF Line2 1 2 15 2 h 3 \"%.10s > DG-ID %u\"", source, dgid);
-	} else {
-		socketPrintf(m_socketfd, "widget_set YSF Line2 1 2 15 2 h 3 \"%.10s >\"", source);
-		socketPrintf(m_socketfd, "widget_set YSF Line3 1 3 15 3 h 3 \"DG-ID %u\"", dgid);
-		socketPrintf(m_socketfd, "output 64"); // Set LED3 color red
-	}
-
-	m_dmr = false;
-	m_rssiCount1 = 0U;
-}
-
-void CLCDproc::writeFusionRSSIInt(unsigned char rssi)
-{
-	if (m_rssiCount1 == 0U)
-		socketPrintf(m_socketfd, "widget_set YSF Line4 1 4 %u 4 h 3 \"-%3udBm\"", m_cols - 1, rssi);
- 
-	m_rssiCount1++;
-	if (m_rssiCount1 >= YSF_RSSI_COUNT)
-		m_rssiCount1 = 0U;
-}
-
-void CLCDproc::clearFusionInt()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "widget_set YSF Line2 1 2 15 2 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set YSF Line3 1 3 15 3 h 3 \"\"");
-	socketPrintf(m_socketfd, "widget_set YSF Line4 1 4 15 4 h 3 \"\"");
-	socketPrintf(m_socketfd, "output 4"); // Set LED3 color green
-}
-
-// LED 2 Green 2 Red 32 Yellow 34
-
-void CLCDproc::writeP25Int(const char* source, bool group, unsigned int dest, const char* type)
-{
-	assert(source != NULL);
-	assert(type != NULL);
-
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "screen_set P25 -priority foreground");
-	socketPrintf(m_socketfd, "widget_set P25 Mode 1 1 P25");
-
-	if (m_rows == 2U) {
-		socketPrintf(m_socketfd, "widget_set P25 Line2 1 2 15 2 h 3 \"%.10s > %s%u\"", source, group ? "TG" : "", dest);
-	} else {
-		socketPrintf(m_socketfd, "widget_set P25 Line2 1 2 15 2 h 3 \"%.10s >\"", source);
-		socketPrintf(m_socketfd, "widget_set P25 Line3 1 3 15 3 h 3 \"%s%u\"", group ? "TG" : "", dest);
-		socketPrintf(m_socketfd, "output 32"); // Set LED2 color red
-	}
-
-	m_dmr = false;
-	m_rssiCount1 = 0U;
-}
-
-void CLCDproc::writeP25RSSIInt(unsigned char rssi)
-{
-	if (m_rssiCount1 == 0U) {
-		socketPrintf(m_socketfd, "widget_set P25 Line4 1 4 %u 4 h 3 \"-%3udBm\"", m_cols - 1, rssi);
-	}
- 
-	m_rssiCount1++;
- 	if (m_rssiCount1 >= P25_RSSI_COUNT)
- 		m_rssiCount1 = 0U;
-}
-
-void CLCDproc::clearP25Int()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "widget_set P25 Line2 1 2 15 2 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set P25 Line3 1 3 15 3 h 3 \"\"");
-	socketPrintf(m_socketfd, "widget_set P25 Line4 1 4 15 4 h 3 \"\"");
-	socketPrintf(m_socketfd, "output 2"); // Set LED2 color green
-}
-
-// LED 5 Green 16 Red 255 Yellow 255
-
-void CLCDproc::writeNXDNInt(const char* source, bool group, unsigned int dest, const char* type)
-{
-	assert(source != NULL);
-	assert(type != NULL);
-
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "screen_set NXDN -priority foreground");
-	socketPrintf(m_socketfd, "widget_set NXDN Mode 1 1 NXDN");
-
-	if (m_rows == 2U) {
-		socketPrintf(m_socketfd, "widget_set NXDN Line2 1 2 15 2 h 3 \"%.10s > %s%u\"", source, group ? "TG" : "", dest);
-	} else {
-		socketPrintf(m_socketfd, "widget_set NXDN Line2 1 2 15 2 h 3 \"%.10s >\"", source);
-		socketPrintf(m_socketfd, "widget_set NXDN Line3 1 3 15 3 h 3 \"%s%u\"", group ? "TG" : "", dest);
-		socketPrintf(m_socketfd, "output 255"); // Set LED5 color red
-	}
-
-	m_dmr = false;
-	m_rssiCount1 = 0U;
-}
-
-void CLCDproc::writeNXDNRSSIInt(unsigned char rssi)
-{
-	if (m_rssiCount1 == 0U) {
-		socketPrintf(m_socketfd, "widget_set NXDN Line4 1 4 %u 4 h 3 \"-%3udBm\"", m_cols - 1, rssi);
-	}
-
-	m_rssiCount1++;
-	if (m_rssiCount1 >= NXDN_RSSI_COUNT)
-		m_rssiCount1 = 0U;
-}
-
-void CLCDproc::clearNXDNInt()
-{
-	m_clockDisplayTimer.stop();           // Stop the clock display
-
-	socketPrintf(m_socketfd, "widget_set NXDN Line2 1 2 15 2 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set NXDN Line3 1 3 15 3 h 3 \"\"");
-	socketPrintf(m_socketfd, "widget_set NXDN Line4 1 4 15 4 h 3 \"\"");
-	socketPrintf(m_socketfd, "output 16"); // Set LED5 color green
 }
 
 void CLCDproc::writePOCSAGInt(uint32_t ric, const std::string& message)
@@ -766,22 +496,6 @@ void CLCDproc::defineScreens()
 	socketPrintf(m_socketfd, "widget_set Status Title 1 %u MMDVM", m_rows);
 	socketPrintf(m_socketfd, "widget_set Status Status %u %u Idle", m_cols - 3, m_rows);
 
-	// The DStar Screen
-
-	socketPrintf(m_socketfd, "screen_add DStar");
-	socketPrintf(m_socketfd, "screen_set DStar -name DStar -heartbeat on -priority hidden -backlight on");
-
-	socketPrintf(m_socketfd, "widget_add DStar Mode string");
-	socketPrintf(m_socketfd, "widget_add DStar Line2 scroller");
-	socketPrintf(m_socketfd, "widget_add DStar Line3 scroller");
-	socketPrintf(m_socketfd, "widget_add DStar Line4 scroller");
-
-/* Do we need to pre-populate the values??
-	socketPrintf(m_socketfd, "widget_set DStar Line2 1 2 15 2 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set DStar Line3 1 3 15 3 h 3 \"\"");
-	socketPrintf(m_socketfd, "widget_set DStar Line4 1 4 15 4 h 3 \"\"");
-*/
-
 	// The DMR Screen
 
 	socketPrintf(m_socketfd, "screen_add DMR");
@@ -800,54 +514,6 @@ void CLCDproc::defineScreens()
 	socketPrintf(m_socketfd, "widget_set DMR Slot2_ 1 %u 2", m_rows / 2 + 1);
 	socketPrintf(m_socketfd, "widget_set DMR Slot1 3 1 15 1 h 3 \"Listening\"");
 	socketPrintf(m_socketfd, "widget_set DMR Slot2 3 2 15 2 h 3 \"Listening\"");
-*/
-
-	// The YSF Screen
-
-	socketPrintf(m_socketfd, "screen_add YSF");
-	socketPrintf(m_socketfd, "screen_set YSF -name YSF -heartbeat on -priority hidden -backlight on");
-
-	socketPrintf(m_socketfd, "widget_add YSF Mode string");
-	socketPrintf(m_socketfd, "widget_add YSF Line2 scroller");
-	socketPrintf(m_socketfd, "widget_add YSF Line3 scroller");
-	socketPrintf(m_socketfd, "widget_add YSF Line4 scroller");
-
-/* Do we need to pre-populate the values??
-	socketPrintf(m_socketfd, "widget_set YSF Line2 2 1 15 1 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set YSF Line3 3 1 15 1 h 3 \" \"");
-	socketPrintf(m_socketfd, "widget_set YSF Line4 4 2 15 2 h 3 \" \"");
-*/
-
-	// The P25 Screen
-
-	socketPrintf(m_socketfd, "screen_add P25");
-	socketPrintf(m_socketfd, "screen_set P25 -name P25 -heartbeat on -priority hidden -backlight on");
-
-	socketPrintf(m_socketfd, "widget_add P25 Mode string");
-	socketPrintf(m_socketfd, "widget_add P25 Line2 scroller");
-	socketPrintf(m_socketfd, "widget_add P25 Line3 scroller");
-	socketPrintf(m_socketfd, "widget_add P25 Line4 scroller");
-
-/* Do we need to pre-populate the values??
-	socketPrintf(m_socketfd, "widget_set P25 Line3 2 1 15 1 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set P25 Line3 3 1 15 1 h 3 \" \"");
-	socketPrintf(m_socketfd, "widget_set P25 Line4 4 2 15 2 h 3 \" \"");
-*/
-
-	// The NXDN Screen
-
-	socketPrintf(m_socketfd, "screen_add NXDN");
-	socketPrintf(m_socketfd, "screen_set NXDN -name NXDN -heartbeat on -priority hidden -backlight on");
-
-	socketPrintf(m_socketfd, "widget_add NXDN Mode string");
-	socketPrintf(m_socketfd, "widget_add NXDN Line2 scroller");
-	socketPrintf(m_socketfd, "widget_add NXDN Line3 scroller");
-	socketPrintf(m_socketfd, "widget_add NXDN Line4 scroller");
-
-/* Do we need to pre-populate the values??
-	socketPrintf(m_socketfd, "widget_set NXDN Line3 2 1 15 1 h 3 \"Listening\"");
-	socketPrintf(m_socketfd, "widget_set NXDN Line3 3 1 15 1 h 3 \" \"");
-	socketPrintf(m_socketfd, "widget_set NXDN Line4 4 2 15 2 h 3 \" \"");
 */
 
 	m_screensDefined = true;
