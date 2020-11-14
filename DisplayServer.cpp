@@ -114,6 +114,8 @@ void CDisplayServer::run()
 	m_dmrLookup = new CDMRLookup(lookupFile, reloadTime);
 	m_dmrLookup->read();
 
+	m_display->setIdle();
+
 	CDisplayNetwork network(m_conf.getDisplayServerAddress(), m_conf.getDisplayServerPort(), m_conf.getDisplayServerDebug());
 
 	ret = network.open();
