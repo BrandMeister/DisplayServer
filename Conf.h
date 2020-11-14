@@ -50,6 +50,13 @@ public:
   // The Log section
   unsigned int getLogDisplayLevel() const;
 
+  // The Transparent Data section
+  bool         getTransparentEnabled() const;
+  std::string  getTransparentRemoteAddress() const;
+  unsigned int getTransparentRemotePort() const;
+  unsigned int getTransparentLocalPort() const;
+  unsigned int getTransparentSendFrameType() const;
+
   // The DMR section
   unsigned int getDMRId() const;
 
@@ -99,6 +106,12 @@ private:
 
   unsigned int m_rxFrequency;
   unsigned int m_txFrequency;
+
+  bool         m_transparentEnabled;
+  std::string  m_transparentRemoteAddress;
+  unsigned int m_transparentRemotePort;
+  unsigned int m_transparentLocalPort;
+  unsigned int m_transparentSendFrameType;
 
   std::string  m_dmrIdLookupFile;
   unsigned int m_dmrIdLookupTime;

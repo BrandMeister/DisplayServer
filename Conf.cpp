@@ -32,6 +32,7 @@ enum SECTION {
   SECTION_GENERAL,
   SECTION_INFO,
   SECTION_LOG,
+  SECTION_TRANSPARENT,
   SECTION_DMRID_LOOKUP,
   SECTION_DMR,
   SECTION_DMR_NETWORK,
@@ -52,6 +53,11 @@ m_displayServerType(),
 m_displayServerDebug(false),
 m_rxFrequency(0U),
 m_txFrequency(0U),
+m_transparentEnabled(false),
+m_transparentRemoteAddress(),
+m_transparentRemotePort(0U),
+m_transparentLocalPort(0U),
+m_transparentSendFrameType(0U),
 m_dmrIdLookupFile(),
 m_dmrIdLookupTime(0U),
 m_dmrId(0U),
@@ -107,6 +113,8 @@ bool CConf::read()
 		  section = SECTION_INFO;
 	  else if (::strncmp(buffer, "[Log]", 5U) == 0)
 		  section = SECTION_LOG;
+	  else if (::strncmp(buffer, "[Transparent Data]", 18U) == 0)
+		  section = SECTION_TRANSPARENT;
 	  else if (::strncmp(buffer, "[DMR Id Lookup]", 15U) == 0)
 		  section = SECTION_DMRID_LOOKUP;
 	  else if (::strncmp(buffer, "[DMR]", 5U) == 0)
@@ -178,7 +186,17 @@ bool CConf::read()
 			m_dmrIdLookupFile = value;
 		else if (::strcmp(key, "Time") == 0)
 			m_dmrIdLookupTime = (unsigned int)::atoi(value);
-
+	} else if (section == SECTION_TRANSPARENT) {
+		if (::strcmp(key, "Enable") == 0)
+			m_transparentEnabled = ::atoi(value) == 1;
+		else if (::strcmp(key, "RemoteAddress") == 0)
+			m_transparentRemoteAddress = value;
+		else if (::strcmp(key, "RemotePort") == 0)
+			m_transparentRemotePort = (unsigned int)::atoi(value);
+		else if (::strcmp(key, "LocalPort") == 0)
+			m_transparentLocalPort = (unsigned int)::atoi(value);
+		else if (::strcmp(key, "SendFrameType") == 0)
+			m_transparentSendFrameType = (unsigned int)::atoi(value);
 	} else if (section == SECTION_DMR) {
 		if (::strcmp(key, "Id") == 0)
 			m_dmrId = (unsigned int)::atoi(value);
@@ -273,6 +291,31 @@ unsigned int CConf::getTXFrequency() const
 unsigned int CConf::getLogDisplayLevel() const
 {
 	return m_logDisplayLevel;
+}
+
+bool CConf::getTransparentEnabled() const
+{
+	return m_transparentEnabled;
+}
+
+std::string CConf::getTransparentRemoteAddress() const
+{
+	return m_transparentRemoteAddress;
+}
+
+unsigned int CConf::getTransparentRemotePort() const
+{
+	return m_transparentRemotePort;
+}
+
+unsigned int CConf::getTransparentLocalPort() const
+{
+	return m_transparentLocalPort;
+}
+
+unsigned int CConf::getTransparentSendFrameType() const
+{
+	return m_transparentSendFrameType;
 }
 
 std::string CConf::getDMRIdLookupFile() const

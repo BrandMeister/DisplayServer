@@ -19,14 +19,12 @@
 #include "Display.h"
 #include "Defines.h"
 #include "SerialController.h"
-//#include "ModemSerialPort.h"
 #include "NullDisplay.h"
+#include "TransparentDataPort.h"
 #include "TFTSurenoo.h"
 #include "LCDproc.h"
 #include "Nextion.h"
-//#include "CASTInfo.h"
 #include "Conf.h"
-//#include "Modem.h"
 #include "Log.h"
 
 #if defined(OLED)
@@ -236,7 +234,16 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 		LogInfo("    Brightness: %u", brightness);
 
 		ISerialPort* serial = NULL;
-		serial = new CSerialController(port, 115200);
+		if (port == "modem") {
+			bool enabled            = conf.getTransparentEnabled();
+			std::string address     = conf.getTransparentRemoteAddress();
+			unsigned int remoteport = conf.getTransparentRemotePort();
+			unsigned int localport  = conf.getTransparentLocalPort();
+			unsigned int frametype  = conf.getTransparentSendFrameType();
+			serial = new CTransparentDataPort(enabled, address, remoteport, localport, frametype);
+		}
+		else
+			serial = new CSerialController(port, 115200);
 
 		display = new CTFTSurenoo(conf.getCallsign(), dmrid, serial, brightness, conf.getDuplex());
 	} else if (type == "Nextion") {
@@ -281,7 +288,19 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 			baudrate = 115200;
 
 		LogInfo("    Display baudrate: %u ",baudrate);
-		ISerialPort* serial = new CSerialController(port, baudrate);
+
+		ISerialPort* serial = NULL;
+		if (port == "modem") {
+			bool enabled            = conf.getTransparentEnabled();
+			std::string address     = conf.getTransparentRemoteAddress();
+			unsigned int remoteport = conf.getTransparentRemotePort();
+			unsigned int localport  = conf.getTransparentLocalPort();
+			unsigned int frametype  = conf.getTransparentSendFrameType();
+			serial = new CTransparentDataPort(enabled, address, remoteport, localport, frametype);
+		}
+		else
+			serial = new CSerialController(port, baudrate);
+
 		display = new CNextion(conf.getCallsign(), dmrid, serial, brightness, displayClock, utc, idleBrightness, screenLayout, txFrequency, rxFrequency, displayTempInF);
 	} else if (type == "LCDproc") {
 		std::string address       = conf.getLCDprocAddress();

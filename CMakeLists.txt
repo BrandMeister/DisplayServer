@@ -24,7 +24,7 @@ file(WRITE ${CMAKE_SOURCE_DIR}/GitVersion.h "const char *gitversion = \"${GIT_HA
 file(GLOB SOURCES "*.cpp")
 file(GLOB HEADERS "*.h")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -Wall -std=c++0x $ENV{CXXFLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -Wall -std=c++0x -pthread $ENV{CXXFLAGS}")
 set(DEPLIBS "pthread")
 
 if(ENABLE_OLED)
