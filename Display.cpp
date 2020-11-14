@@ -236,10 +236,7 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 		LogInfo("    Brightness: %u", brightness);
 
 		ISerialPort* serial = NULL;
-		//if (port == "modem")
-		//	serial = new CModemSerialPort(modem);
-		//else
-			serial = new CSerialController(port, 115200);
+		serial = new CSerialController(port, 115200);
 
 		display = new CTFTSurenoo(conf.getCallsign(), dmrid, serial, brightness, conf.getDuplex());
 	} else if (type == "Nextion") {
@@ -279,18 +276,13 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 			break;
 		}
 
-		//if (port == "modem") {
-		//	ISerialPort* serial = new CModemSerialPort(modem);
-		//	display = new CNextion(conf.getCallsign(), dmrid, serial, brightness, displayClock, utc, idleBrightness, screenLayout, txFrequency, rxFrequency, displayTempInF);
-		//} else {
-			unsigned int baudrate = 9600;
-			if (screenLayout&0x0cU)
-				baudrate = 115200;
-			
-			LogInfo("    Display baudrate: %u ",baudrate);
-			ISerialPort* serial = new CSerialController(port, baudrate);
-			display = new CNextion(conf.getCallsign(), dmrid, serial, brightness, displayClock, utc, idleBrightness, screenLayout, txFrequency, rxFrequency, displayTempInF);
-		//}
+		unsigned int baudrate = 9600;
+		if (screenLayout&0x0cU)
+			baudrate = 115200;
+
+		LogInfo("    Display baudrate: %u ",baudrate);
+		ISerialPort* serial = new CSerialController(port, baudrate);
+		display = new CNextion(conf.getCallsign(), dmrid, serial, brightness, displayClock, utc, idleBrightness, screenLayout, txFrequency, rxFrequency, displayTempInF);
 	} else if (type == "LCDproc") {
 		std::string address       = conf.getLCDprocAddress();
 		unsigned int port         = conf.getLCDprocPort();
@@ -325,8 +317,6 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 
 		display = new COLED(type, brightness, invert, scroll, rotate, logosaver, conf.getDMRNetworkSlot1(), conf.getDMRNetworkSlot2());
 #endif
-	//} else if (type == "CAST") {
-	//	display = new CCASTInfo(modem);
 	} else {
 		LogWarning("No valid display found, disabling");
 		display = new CNullDisplay;
