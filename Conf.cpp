@@ -118,7 +118,7 @@ bool CConf::read()
 		  section = SECTION_DMR;
 	  else if (::strncmp(buffer, "[DMR Network]", 13U) == 0)
 		  section = SECTION_DMR_NETWORK;
-	  else if (::strncmp(buffer, "[Display Server]", 12U) == 0)
+	  else if (::strncmp(buffer, "[Display Server]", 16U) == 0)
 		  section = SECTION_DISPLAY_SERVER;
 	  else if (::strncmp(buffer, "[TFT Serial]", 12U) == 0)
 		  section = SECTION_TFTSERIAL;
@@ -206,10 +206,10 @@ bool CConf::read()
 			m_displayServerPort = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "DisplayType") == 0)
 			m_displayServerType = value;
+		else if (::strcmp(key, "LogDisplayLevel") == 0)
+			m_logDisplayLevel = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "Debug") == 0)
 			m_displayServerDebug = ::atoi(value) == 1;
-		if (::strcmp(key, "LogDisplayLevel") == 0)
-			m_logDisplayLevel = (unsigned int)::atoi(value);
 	} else if (section == SECTION_TFTSERIAL) {
 		if (::strcmp(key, "Port") == 0)
 			m_tftSerialPort = value;
