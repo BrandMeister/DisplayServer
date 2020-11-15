@@ -31,7 +31,6 @@ enum SECTION {
   SECTION_NONE,
   SECTION_GENERAL,
   SECTION_INFO,
-  SECTION_LOG,
   SECTION_TRANSPARENT,
   SECTION_DMRID_LOOKUP,
   SECTION_DMR,
@@ -111,8 +110,6 @@ bool CConf::read()
           section = SECTION_GENERAL;
 	  else if (::strncmp(buffer, "[Info]", 6U) == 0)
 		  section = SECTION_INFO;
-	  else if (::strncmp(buffer, "[Log]", 5U) == 0)
-		  section = SECTION_LOG;
 	  else if (::strncmp(buffer, "[Transparent Data]", 18U) == 0)
 		  section = SECTION_TRANSPARENT;
 	  else if (::strncmp(buffer, "[DMR Id Lookup]", 15U) == 0)
@@ -178,9 +175,6 @@ bool CConf::read()
 			m_txFrequency = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "RXFrequency") == 0)
 			m_rxFrequency = (unsigned int)::atoi(value);
-	} else if (section == SECTION_LOG) {
-		if (::strcmp(key, "DisplayLevel") == 0)
-			m_logDisplayLevel = (unsigned int)::atoi(value);
 	} else if (section == SECTION_DMRID_LOOKUP) {
 		if (::strcmp(key, "File") == 0)
 			m_dmrIdLookupFile = value;
@@ -214,6 +208,8 @@ bool CConf::read()
 			m_displayServerType = value;
 		else if (::strcmp(key, "Debug") == 0)
 			m_displayServerDebug = ::atoi(value) == 1;
+		if (::strcmp(key, "LogDisplayLevel") == 0)
+			m_logDisplayLevel = (unsigned int)::atoi(value);
 	} else if (section == SECTION_TFTSERIAL) {
 		if (::strcmp(key, "Port") == 0)
 			m_tftSerialPort = value;
