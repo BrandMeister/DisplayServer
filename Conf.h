@@ -41,14 +41,12 @@ public:
   std::string  getDMRIdLookupFile() const;
   unsigned int getDMRIdLookupTime() const;
 
-  // The Network section
+  // The Display section
   std::string  getDisplayServerAddress() const;
   unsigned int getDisplayServerPort() const;
   std::string  getDisplayServerType() const;
   bool         getDisplayServerDebug() const;
-
-  // The Log section
-  unsigned int getLogDisplayLevel() const;
+  unsigned int getLogLevel() const;
 
   // The Transparent Data section
   bool         getTransparentEnabled() const;
@@ -116,7 +114,7 @@ private:
   std::string  m_dmrIdLookupFile;
   unsigned int m_dmrIdLookupTime;
 
-  unsigned int m_logDisplayLevel;
+  unsigned int m_logLevel;
 
   unsigned int m_dmrId;
 

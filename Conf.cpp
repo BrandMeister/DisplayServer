@@ -35,7 +35,7 @@ enum SECTION {
   SECTION_DMRID_LOOKUP,
   SECTION_DMR,
   SECTION_DMR_NETWORK,
-  SECTION_DISPLAY_SERVER,
+  SECTION_DISPLAY,
   SECTION_TFTSERIAL,
   SECTION_NEXTION,
   SECTION_OLED,
@@ -118,8 +118,8 @@ bool CConf::read()
 		  section = SECTION_DMR;
 	  else if (::strncmp(buffer, "[DMR Network]", 13U) == 0)
 		  section = SECTION_DMR_NETWORK;
-	  else if (::strncmp(buffer, "[Display Server]", 16U) == 0)
-		  section = SECTION_DISPLAY_SERVER;
+	  else if (::strncmp(buffer, "[Display]", 9U) == 0)
+		  section = SECTION_DISPLAY;
 	  else if (::strncmp(buffer, "[TFT Serial]", 12U) == 0)
 		  section = SECTION_TFTSERIAL;
 	  else if (::strncmp(buffer, "[Nextion]", 9U) == 0)
@@ -199,15 +199,15 @@ bool CConf::read()
 			m_dmrNetworkSlot1 = ::atoi(value) == 1;
 		else if (::strcmp(key, "Slot2") == 0)
 			m_dmrNetworkSlot2 = ::atoi(value) == 1;
-	} else if (section == SECTION_DISPLAY_SERVER) {
-		if (::strcmp(key, "LocalAddress") == 0)
+	} else if (section == SECTION_DISPLAY) {
+		if (::strcmp(key, "ListenAddress") == 0)
 			m_displayServerAddress = value;
-		else if (::strcmp(key, "Port") == 0)
+		else if (::strcmp(key, "ListenPort") == 0)
 			m_displayServerPort = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "DisplayType") == 0)
 			m_displayServerType = value;
-		else if (::strcmp(key, "LogDisplayLevel") == 0)
-			m_logDisplayLevel = (unsigned int)::atoi(value);
+		else if (::strcmp(key, "LogLevel") == 0)
+			m_logLevel = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "Debug") == 0)
 			m_displayServerDebug = ::atoi(value) == 1;
 	} else if (section == SECTION_TFTSERIAL) {
@@ -284,9 +284,9 @@ unsigned int CConf::getTXFrequency() const
 	return m_txFrequency;
 }
 
-unsigned int CConf::getLogDisplayLevel() const
+unsigned int CConf::getLogLevel() const
 {
-	return m_logDisplayLevel;
+	return m_logLevel;
 }
 
 bool CConf::getTransparentEnabled() const

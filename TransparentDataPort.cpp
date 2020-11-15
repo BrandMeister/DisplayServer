@@ -51,7 +51,7 @@ bool CTransparentDataPort::open()
 		return false;
 	}
 	if (CUDPSocket::lookup(m_address, m_localport, m_addr, m_addrLen) != 0) {
-		LogError("Unable to resolve the address of the Transparent Data source");
+		LogError("Display, Unable to resolve the address of the Transparent data source");
 		return false;
 	}
 
