@@ -18,6 +18,8 @@
 
 #pragma once
 
+#if defined(OLED)
+
 #define OLED_STATUSBAR 0
 #define OLED_LINE1 8 //16
 #define OLED_LINE2 18 //26 
@@ -79,3 +81,4 @@ private:
 
   void OLED_statusbar();
 };
+#endif

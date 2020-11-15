@@ -16,6 +16,8 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#if defined(OLED)
+
 #include "OLED.h"
 #include "Log.h"
 
@@ -395,3 +397,4 @@ void COLED::OLED_statusbar()
     if (m_displayScroll)
         m_display.startscrollleft(0x00,0x01);
 }
+#endif

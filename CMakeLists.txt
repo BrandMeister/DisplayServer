@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
 set(APP_NAME "DisplayServer")
 project(${APP_NAME} CXX)
 
@@ -26,23 +24,18 @@ file(GLOB HEADERS "*.h")
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -Wall -std=c++0x -pthread $ENV{CXXFLAGS}")
 set(DEPLIBS "pthread")
+set(INCLUDE_DIRS "")
 
-if(ENABLE_OLED)
-  find_package(ArduiPi_OLED REQUIRED)
-  include_directories(${ARDUIPI_OLED_INCLUDE_DIRS})
-  list(APPEND DEPLIBS ${ARDUIPI_OLED_LIBRARIES})
-
-  find_package(I2c REQUIRED)
-  include_directories(${I2C_INCLUDE_DIRS})
-  list(APPEND DEPLIBS ${I2C_LIBRARIES})
-
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  # use our local copy of ArduiPi_OLED and libi2c (smbus.*)
+  add_subdirectory(ArduiPi_OLED)
+  list(APPEND DEPLIBS ArduiPi_OLED)
+  list(APPEND INCLUDE_DIRS ArduiPi_OLED)
   add_definitions(-DOLED)
-else()
-  list(REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/OLED.cpp)
-  list(REMOVE_ITEM HEADERS ${CMAKE_SOURCE_DIR}/OLED.h)
 endif()
 
 add_executable(${APP_NAME} ${SOURCES} ${HEADERS})
+target_include_directories(${APP_NAME} PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(${APP_NAME} ${DEPLIBS})
 
 include(GNUInstallDirs)
