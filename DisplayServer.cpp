@@ -131,212 +131,122 @@ void CDisplayServer::run()
 
 		unsigned int len = network.readData((unsigned char*)buffer, 200U, addr, addrLen);
 		if (len > 0U) {
-			if (::memcmp(buffer, "setIdle", 6U) == 0) {
+			switch (buffer[0]) {
+			case 0x01U: // idle
 				m_display->setIdle();
-			}
-			else if (::memcmp(buffer, "setError ", 9U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 2)
-						break;
-				}
+				break;
+			case 0x02U: { // error
+				unsigned int count = buffer[1U];
 
-				const char* text = argv[1];
-				if (text) {
-					m_display->setError(text);
+				char text[count];
+				text[0] = 0U;
+				for (uint8_t i = 0U; i < count; i++)
+					text[i] = buffer[2 + i];
+
+				m_display->setError(text);
+				//LogMessage(".... setError text %s", text);
 				}
-			}
-			else if (::memcmp(buffer, "setQuit", 7U) == 0) {
+				break;
+			case 0x03U: // quit
 				m_display->setQuit();
-			}
-			else if (::memcmp(buffer, "writeDMR ", 9U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-				}
+				break;
+			case 0x04U: { // write dmr
+				unsigned int slotNo = buffer[1];
 
-				unsigned int slot = atoi(argv[1]);
-				std::string src = m_dmrLookup->find(atoi(argv[2]));
-				bool group = atoi(argv[3]);
-				std::string dst = m_dmrLookup->find(atoi(argv[4]));
-				char* type = argv[5];
-				if (type) {
-					m_display->writeDMR(slot, src, group, dst, type);
-					//LogMessage(".... writeDMR %s %s", src.c_str(), dst.c_str());
-				}
-			}
-			else if (::memcmp(buffer, "writeDMRRSSI ", 13U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 3)
-						break;
-				}
+				unsigned int srcId = (buffer[2] << 24) | ((buffer[3] & 0xFF) << 16) | ((buffer[4] & 0xFF) << 8) | (buffer[5] & 0xFF);
+				std::string src = m_dmrLookup->find(srcId);
 
-				unsigned int slot = atoi(argv[1]);
-				char* rssi = argv[2];
-				if (rssi) {
-					//m_display->writeDMRRSSI(slot, rssi);
-					//LogMessage(".... writeDMRRSSI %u %s", slot, rssi);
-				}
-			}
-			else if (::memcmp(buffer, "writeDMRTA ", 11U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 4)
-						break;
-				}
+				bool group = buffer[6] != 0;
 
-				unsigned int slot = atoi(argv[1]);
-				const char* type = argv[2];
-				char* ta = argv[3];
-				if (ta) {
-					m_display->writeDMRTA(slot, (unsigned char*)ta, type);
-				}
-			}
-			else if (::memcmp(buffer, "writeDMRBER ", 12U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 3)
-						break;
-				}
+				unsigned int dstId = (buffer[7] << 24) | ((buffer[8] & 0xFF) << 16) | ((buffer[9] & 0xFF) << 8) | (buffer[10] & 0xFF);
+				std::string dst = m_dmrLookup->find(dstId);
 
-				unsigned int slot = atoi(argv[1]);
-				float ber = atof(argv[2]);
-				if (ber) {
-					m_display->writeDMRBER(slot, ber);
-				}
-			}
-			else if (::memcmp(buffer, "clearDMR ", 9U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 2)
-						break;
-				}
+				char type[2U];
+				type[0] = buffer[11];
+				type[1] = 0U;
 
-				unsigned int slot = atoi(argv[1]);
-
-				m_display->clearDMR(slot);
-			}
-			else if (::memcmp(buffer, "writePOCSAG ", 12U) == 0) {
-				char* argv[256];
-				int cnt = 0;
-				int newtoken = 1;
-				size_t len = strlen(buffer);
-				for (size_t i = 0U; i < len; i++) {
-					switch (buffer[i]) {
-						case ' ':
-							newtoken = 1;
-							buffer[i] = 0;
-							break;
-						default:
-							if (newtoken)
-								argv[cnt++] = buffer + i;
-							newtoken = 0;
-							break;
-					}
-					if (cnt >= 3)
-						break;
+				m_display->writeDMR(slotNo, src, group, dst, type);
+				//LogMessage(".... writeDMR src %s dst %s group %d type %s", src.c_str(), dst.c_str(), group, type);
 				}
+				break;
+			case 0x05U: { // dmr rssi
+				unsigned int slotNo = buffer[1U];
+				unsigned int rssi = buffer[2U];
 
-				uint32_t ric = atoi(argv[1]);
-				std::string message = argv[2];
+				m_display->writeDMRRSSI(slotNo, rssi);
+				//LogMessage(".... writeDMRRSSI slotNo %u rssi %u", slotNo, rssi);
+				}
+				break;
+			case 0x06U: { // dmr ta
+				unsigned int slotNo = buffer[1U];
+
+				char type[2U];
+				type[0] = buffer[2U];
+				type[1] = 0U;
+
+				unsigned int count = buffer[3U];
+
+				unsigned char talkerAlias[count];
+				talkerAlias[0] = 0U;
+				for (uint8_t i = 0U; i < count; i++)
+					talkerAlias[i] = buffer[4 + i];
+
+				m_display->writeDMRTA(slotNo, talkerAlias, type);
+				//LogMessage(".... writeDMRTA slotNo %u type %s ta %s", slotNo, type, talkerAlias);
+				}
+				break;
+			case 0x07U: { // dmr ber
+				unsigned int slotNo = buffer[1U];
+
+				unsigned int count = buffer[2U];
+
+				char _ber[count];
+				_ber[0] = 0U;
+				for (uint8_t i = 0U; i < count; i++)
+					_ber[i] = buffer[3 + i];
+
+				float ber = atof(_ber);
+				m_display->writeDMRBER(slotNo, ber);
+				//LogMessage(".... writeDMRBER slotNo %u %f", slotNo, ber);
+				}
+				break;
+			case 0x08U: { // clear dmr
+				unsigned int slotNo = buffer[1U];
+				m_display->clearDMR(slotNo);
+				//LogMessage(".... clearDMR slotNo %u", slotNo);
+				}
+				break;
+			case 0x09U: { // write pocsag
+				uint32_t ric = (buffer[1] << 24) | ((buffer[2] & 0xFF) << 16) | ((buffer[3] & 0xFF) << 8) | (buffer[4] & 0xFF);
+
+				unsigned int count = buffer[5U];
+
+				char buf[count];
+				buf[0] = 0;
+				for (uint8_t i = 0U; i < count; i++)
+					buf[i] = buffer[6 + i];
+
+				std::string message(buf, count);
+
 				m_display->writePOCSAG(ric, message.c_str());
-			}
-			else if (::memcmp(buffer, "clearPOCSAG", 11U) == 0) {
+				//LogMessage(".... writePOCSSAG ric %u message %s", ric, message.c_str());
+				}
+				break;
+			case 0x0AU: // clear pocsag
 				m_display->clearPOCSAG();
-			}
-			else if (::memcmp(buffer, "writeCW", 7U) == 0) {
+				break;
+			case 0x0BU: // write cw
 				m_display->writeCW();
-			}
-			else if (::memcmp(buffer, "clearCW", 7U) == 0) {
+				break;
+			case 0x0CU: // clear cw
 				m_display->setIdle();
-			}
-			else if (::memcmp(buffer, "close", 5U) == 0) {
+				break;
+			case 0x0DU: // close
 				// do nothing here for now
 				//m_display->close();
+				break;
+			default:
+				break;
 			}
 		}
 
