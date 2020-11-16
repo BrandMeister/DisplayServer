@@ -164,28 +164,18 @@ class ArduiPi_OLED : public Adafruit_GFX
   void sendCommand(uint8_t c);
   void sendCommand(uint8_t c0, uint8_t c1);
   void sendCommand(uint8_t c0, uint8_t c1, uint8_t c2);
-  void sendData(uint8_t c);
 
   void clearDisplay(void);
-  void setGrayLevel(uint8_t grayLevel);
   void setBrightness(uint8_t Brightness);
   void invertDisplay(uint8_t i);
   void display();
-  
-  void setSeedTextXY(unsigned char Row, unsigned char Column);
-  void putSeedChar(char C);
-  void putSeedString(const char *String);
 
- 
   int16_t getOledWidth(void);
   int16_t getOledHeight(void);
 
-  void startscrollright(uint8_t start, uint8_t stop);
   void startscrollleft(uint8_t start, uint8_t stop);
 
-  void startscrolldiagright(uint8_t start, uint8_t stop);
   void startscrolldiagleft(uint8_t start, uint8_t stop);
-  void setHorizontalScrollProperties(bool direction,uint8_t startRow, uint8_t endRow,uint8_t startColumn, uint8_t endColumn, uint8_t scrollSpeed);
   void stopscroll(void);
 
   void drawPixel(int16_t x, int16_t y, uint16_t color);

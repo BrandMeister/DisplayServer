@@ -5,7 +5,6 @@ project(ArduiPi_OLED)
 set(SOURCES ArduiPi_OLED.cpp
 	Adafruit_GFX.cpp
 	bcm2835.c
-	Wrapper.cpp
 	smbus.c)
 
 set(HEADERS Adafruit_GFX.h

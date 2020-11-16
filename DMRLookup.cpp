@@ -80,27 +80,6 @@ void CDMRLookup::stop()
 	wait();
 }
 
-void CDMRLookup::findWithName(unsigned int id, class CUserDBentry *entry)
-{
-	if (id == 0xFFFFFFU) {
-		entry->clear();
-		entry->set(keyCALLSIGN, "ALL");
-		return;
-	}
-
-	if (m_table.lookup(id, entry)) {
-		LogDebug("FindWithName =%s %s", entry->get(keyCALLSIGN).c_str(), entry->get(keyFIRST_NAME).c_str());
-	} else {
-		entry->clear();
-
-		char text[10U];
-		::snprintf(text, sizeof(text), "%u", id);
-		entry->set(keyCALLSIGN, text);
-	}
-
-	return;
-}
-
 std::string CDMRLookup::find(unsigned int id)
 {
 	std::string callsign;
@@ -118,9 +97,4 @@ std::string CDMRLookup::find(unsigned int id)
 	}
 
 	return callsign;
-}
-
-bool CDMRLookup::exists(unsigned int id)
-{
-	return m_table.lookup(id, NULL);
 }

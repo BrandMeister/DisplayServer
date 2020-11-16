@@ -33,9 +33,6 @@ public:
 	virtual void entry();
 
 	std::string find(unsigned int id);
-	void findWithName(unsigned int id, class CUserDBentry *entry);
-
-	bool exists(unsigned int id);
 
 	void stop();
 
