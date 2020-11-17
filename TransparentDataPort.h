@@ -29,13 +29,13 @@ public:
 	CTransparentDataPort(bool enabled, const std::string& address, unsigned int remoteport, unsigned int localport, unsigned int frametype);
 	virtual ~CTransparentDataPort();
 
-	virtual bool open();
+	virtual bool open() override;
 
-	virtual int read(unsigned char* buffer, unsigned int length);
+	virtual int read(unsigned char* buffer, unsigned int length) override;
 
-	virtual int write(const unsigned char* buffer, unsigned int length);
+	virtual int write(const unsigned char* buffer, unsigned int length) override;
 
-	virtual void close();
+	virtual void close() override;
 
 private:
 	CUDPSocket*      m_socket;

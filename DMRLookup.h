@@ -30,7 +30,7 @@ public:
 
 	bool read();
 
-	virtual void entry();
+	virtual void entry() override;
 
 	std::string find(unsigned int id);
 
