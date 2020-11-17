@@ -551,7 +551,7 @@ void CNextion::sendCommandAction(unsigned int status)
 		return;
 
     char text[30U];
-    ::sprintf(text, "MMDVM.status.val=%d", status);
+    ::sprintf(text, "MMDVM.status.val=%u", status);
     sendCommand(text);
     sendCommand("click S0,1");
 }

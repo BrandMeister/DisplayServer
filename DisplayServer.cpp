@@ -142,6 +142,7 @@ void CDisplayServer::run()
 				text[0] = 0U;
 				for (uint8_t i = 0U; i < count; i++)
 					text[i] = buffer[2 + i];
+				text[count] = 0U;
 
 				m_display->setError(text);
 				//LogMessage(".... setError text %s", text);
@@ -190,6 +191,7 @@ void CDisplayServer::run()
 				talkerAlias[0] = 0U;
 				for (uint8_t i = 0U; i < count; i++)
 					talkerAlias[i] = buffer[4 + i];
+				talkerAlias[count] = 0U;
 
 				m_display->writeDMRTA(slotNo, talkerAlias, type);
 				//LogMessage(".... writeDMRTA slotNo %u type %s ta %s", slotNo, type, talkerAlias);
@@ -204,6 +206,7 @@ void CDisplayServer::run()
 				_ber[0] = 0U;
 				for (uint8_t i = 0U; i < count; i++)
 					_ber[i] = buffer[3 + i];
+				_ber[count] = 0U;
 
 				float ber = atof(_ber);
 				m_display->writeDMRBER(slotNo, ber);
@@ -222,9 +225,10 @@ void CDisplayServer::run()
 				unsigned int count = buffer[5U];
 
 				char buf[count];
-				buf[0] = 0;
+				buf[0] = 0U;
 				for (uint8_t i = 0U; i < count; i++)
 					buf[i] = buffer[6 + i];
+				buf[count] = 0U;
 
 				std::string message(buf, count);
 

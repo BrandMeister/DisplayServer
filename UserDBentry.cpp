@@ -32,19 +32,19 @@ const std::vector<std::string> CUserDBentry::keyList {
 	keyCITY, keySTATE, keyCOUNTRY,
 };
 
-bool CUserDBentry::isValidKey(const std::string key)
+bool CUserDBentry::isValidKey(const std::string& key)
 {
 	auto it = std::find(keyList.begin(), keyList.end(), key);
 	return it != keyList.end();
 }
 
-void CUserDBentry::set(const std::string key, const std::string value)
+void CUserDBentry::set(const std::string& key, const std::string& value)
 {
 	if (!value.empty() && isValidKey(key))
 		m_db[key] = value;
 }
 
-const std::string CUserDBentry::get(const std::string key) const
+const std::string CUserDBentry::get(const std::string& key) const
 {
 	try {
 		return m_db.at(key);

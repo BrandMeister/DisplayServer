@@ -88,7 +88,8 @@ m_duplex(duplex),
 //m_duplex(true),                      // uncomment to force duplex display for testing!
 m_refresh(false),
 m_refreshTimer(1000U, 0U, REFRESH_PERIOD),
-m_lineBuf(NULL)
+m_lineBuf(NULL),
+m_temp()
 {
 	assert(serial != NULL);
 	assert(brightness >= 0U && brightness <= 255U);
@@ -181,7 +182,7 @@ void CTFTSurenoo::writeDMRInt(unsigned int slotNo, const std::string& src, bool 
 	::snprintf(m_temp, sizeof(m_temp), "%s %s", type, src.c_str());
 	setStatusLine(statusLineNo(pos * 2), m_temp);
 
-	::snprintf(m_temp, sizeof(m_temp), "TS%d %s%s", slotNo, group ? "TG" : "", dst.c_str());
+	::snprintf(m_temp, sizeof(m_temp), "TS%u %s%s", slotNo, group ? "TG" : "", dst.c_str());
 	setStatusLine(statusLineNo(pos * 2 + 1), m_temp);
 
 	m_mode = MODE_DMR;
@@ -212,7 +213,7 @@ void CTFTSurenoo::clearDMRInt(unsigned int slotNo)
 	setStatusLine(statusLineNo(pos * 2), "Listening");
 
 	if (m_duplex) {
-		::snprintf(m_temp, sizeof(m_temp), "TS%d", slotNo);
+		::snprintf(m_temp, sizeof(m_temp), "TS%u", slotNo);
 		setStatusLine(statusLineNo(pos * 2 + 1), m_temp);
 	} else {
 		for (int i = 1; i < STATUS_LINES; i++)

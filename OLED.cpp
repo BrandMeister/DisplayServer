@@ -88,6 +88,9 @@ const unsigned char logo_POCSAG_bmp [] =
 };
 
 COLED::COLED(unsigned char displayType, unsigned char displayBrightness, bool displayInvert, bool displayScroll, bool displayRotate, bool displayLogoScreensaver, bool slot1Enabled, bool slot2Enabled) :
+m_slot1_state(),
+m_slot2_state(),
+m_mode(),
 m_displayType(displayType),
 m_displayBrightness(displayBrightness),
 m_displayInvert(displayInvert),

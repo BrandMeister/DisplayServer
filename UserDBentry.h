@@ -36,10 +36,10 @@ public:
 	~CUserDBentry();
 
 	static const std::vector<std::string> keyList;
-	static bool isValidKey(const std::string key);
+	static bool isValidKey(const std::string& key);
 
-	void set(const std::string key, const std::string value);
-	const std::string get(const std::string key) const;
+	void set(const std::string& key, const std::string& value);
+	const std::string get(const std::string& key) const;
 	void clear(void);
 
 private:
