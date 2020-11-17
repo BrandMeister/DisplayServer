@@ -327,14 +327,14 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 		display = new CLCDproc(address.c_str(), port, localPort, conf.getCallsign(), dmrid, displayClock, utc, conf.getDuplex(), dimOnIdle);
 #if defined(OLED)
 	} else if (type == "OLED") {
-	        unsigned char type       = conf.getOLEDType();
+	        unsigned char oledtype   = conf.getOLEDType();
 	        unsigned char brightness = conf.getOLEDBrightness();
 	        bool          invert     = conf.getOLEDInvert();
 	        bool          scroll     = conf.getOLEDScroll();
 		bool          rotate     = conf.getOLEDRotate();
 		bool          logosaver  = conf.getOLEDLogoScreensaver();
 
-		display = new COLED(type, brightness, invert, scroll, rotate, logosaver, conf.getDMRNetworkSlot1(), conf.getDMRNetworkSlot2());
+		display = new COLED(oledtype, brightness, invert, scroll, rotate, logosaver, conf.getDMRNetworkSlot1(), conf.getDMRNetworkSlot2());
 #endif
 	} else {
 		LogWarning("No valid display found, disabling");

@@ -67,7 +67,6 @@ m_fl_rxFrequency(0.0F),
 m_displayTempInF(displayTempInF)
 {
 	assert(serial != NULL);
-	assert(brightness >= 0U && brightness <= 100U);
 
 	static const unsigned int feature_set[] = {
 		0,				// 0: G4KLX

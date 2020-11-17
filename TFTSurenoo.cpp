@@ -92,7 +92,6 @@ m_lineBuf(NULL),
 m_temp()
 {
 	assert(serial != NULL);
-	assert(brightness >= 0U && brightness <= 255U);
 }
 
 CTFTSurenoo::~CTFTSurenoo()
@@ -333,8 +332,6 @@ void CTFTSurenoo::lcdReset(void)
 
 void CTFTSurenoo::clearScreen(unsigned char colour)
 {
-	assert(colour >= 0U && colour <= 63U);
-
 	::snprintf(m_temp, sizeof(m_temp), "CLR(%d);" STR_CRLF, colour);
 	m_serial->write((unsigned char*)m_temp, (unsigned int)::strlen(m_temp));
 	CThread::sleep(100);	// at least 60ms (@240x320 panel)
@@ -342,24 +339,18 @@ void CTFTSurenoo::clearScreen(unsigned char colour)
 
 void CTFTSurenoo::setBackground(unsigned char colour)
 {
-	assert(colour >= 0U && colour <= 63U);
-
 	::snprintf(m_temp, sizeof(m_temp), "SBC(%d);", colour);
 	m_serial->write((unsigned char*)m_temp, (unsigned int)::strlen(m_temp));
 }
 
 void CTFTSurenoo::setRotation(unsigned char rotation)
 {
-	assert(rotation >= 0U && rotation <= 1U);
-
 	::snprintf(m_temp, sizeof(m_temp), "DIR(%d);", rotation);
 	m_serial->write((unsigned char*)m_temp, (unsigned int)::strlen(m_temp));
 }
 
 void CTFTSurenoo::setBrightness(unsigned char brightness)
 {
-	assert(brightness >= 0U && brightness <= 255U);
-
 	::snprintf(m_temp, sizeof(m_temp), "BL(%d);", brightness);
 	m_serial->write((unsigned char*)m_temp, (unsigned int)::strlen(m_temp));
 }

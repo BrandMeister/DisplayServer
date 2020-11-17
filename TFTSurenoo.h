@@ -34,26 +34,26 @@ public:
   CTFTSurenoo(const std::string& callsign, unsigned int dmrid, ISerialPort* serial, unsigned int brightness, bool duplex);
   virtual ~CTFTSurenoo();
 
-  virtual bool open();
+  virtual bool open() override;
 
-  virtual void close();
+  virtual void close() override;
 
 protected:
-	virtual void setIdleInt();
-	virtual void setErrorInt(const char* text);
-	virtual void setQuitInt();
+	virtual void setIdleInt() override;
+	virtual void setErrorInt(const char* text) override;
+	virtual void setQuitInt() override;
 
-	virtual void writeDMRInt(unsigned int slotNo, const std::string& src, bool group, const std::string& dst, const char* type);
+	virtual void writeDMRInt(unsigned int slotNo, const std::string& src, bool group, const std::string& dst, const char* type) override;
 	virtual int writeDMRIntEx(unsigned int slotNo, const class CUserDBentry& src, bool group, const std::string& dst, const char* type);
-	virtual void clearDMRInt(unsigned int slotNo);
+	virtual void clearDMRInt(unsigned int slotNo) override;
 
-	virtual void writePOCSAGInt(uint32_t ric, const std::string& message);
-	virtual void clearPOCSAGInt();
+	virtual void writePOCSAGInt(uint32_t ric, const std::string& message) override;
+	virtual void clearPOCSAGInt() override;
 
-	virtual void writeCWInt();
-	virtual void clearCWInt();
+	virtual void writeCWInt() override;
+	virtual void clearCWInt() override;
 
-	virtual void clockInt(unsigned int ms);
+	virtual void clockInt(unsigned int ms) override;
 
 private:
    std::string   m_callsign;
