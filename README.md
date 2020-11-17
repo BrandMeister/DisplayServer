@@ -24,4 +24,9 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
+Debian / Ubuntu packages can be found at [DMRHost](https://github.com/BrandMeister/DMRHost) repo:
+```
+apt-get install displayserver
+```
+
 If you have questions, feel free to join our [telegram](https://t.me/dmrhost) group.
