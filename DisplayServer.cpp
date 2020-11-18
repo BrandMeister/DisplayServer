@@ -278,6 +278,8 @@ void CDisplayServer::run()
 		unsigned int ms = stopWatch.elapsed();
 		stopWatch.start();
 
+		m_display->clock(ms);
+
 		pollTimer.clock(ms);
 		if (pollTimer.hasExpired()) {
 			pollTimer.start();
