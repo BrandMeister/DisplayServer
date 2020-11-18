@@ -52,6 +52,7 @@ public:
   bool         getTransparentEnabled() const;
   std::string  getTransparentRemoteAddress() const;
   unsigned int getTransparentRemotePort() const;
+  std::string  getTransparentLocalAddress() const;
   unsigned int getTransparentLocalPort() const;
   unsigned int getTransparentSendFrameType() const;
 
@@ -108,6 +109,7 @@ private:
   bool         m_transparentEnabled;
   std::string  m_transparentRemoteAddress;
   unsigned int m_transparentRemotePort;
+  std::string  m_transparentLocalAddress;
   unsigned int m_transparentLocalPort;
   unsigned int m_transparentSendFrameType;
 

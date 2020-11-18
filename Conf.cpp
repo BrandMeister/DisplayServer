@@ -53,9 +53,10 @@ m_displayServerDebug(false),
 m_rxFrequency(0U),
 m_txFrequency(0U),
 m_transparentEnabled(false),
-m_transparentRemoteAddress(),
-m_transparentRemotePort(0U),
-m_transparentLocalPort(0U),
+m_transparentRemoteAddress("127.0.0.1"),
+m_transparentRemotePort(40094U),
+m_transparentLocalAddress("127.0.0.1"),
+m_transparentLocalPort(40095U),
 m_transparentSendFrameType(0U),
 m_dmrIdLookupFile(),
 m_dmrIdLookupTime(0U),
@@ -188,6 +189,8 @@ bool CConf::read()
 			m_transparentRemoteAddress = value;
 		else if (::strcmp(key, "RemotePort") == 0)
 			m_transparentRemotePort = (unsigned int)::atoi(value);
+		else if (::strcmp(key, "LocalAddress") == 0)
+			m_transparentLocalAddress = value;
 		else if (::strcmp(key, "LocalPort") == 0)
 			m_transparentLocalPort = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "SendFrameType") == 0)
@@ -303,6 +306,11 @@ std::string CConf::getTransparentRemoteAddress() const
 unsigned int CConf::getTransparentRemotePort() const
 {
 	return m_transparentRemotePort;
+}
+
+std::string CConf::getTransparentLocalAddress() const
+{
+	return m_transparentLocalAddress;
 }
 
 unsigned int CConf::getTransparentLocalPort() const

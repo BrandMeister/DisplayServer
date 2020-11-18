@@ -235,12 +235,13 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 
 		ISerialPort* serial = NULL;
 		if (port == "modem") {
-			bool enabled            = conf.getTransparentEnabled();
-			std::string address     = conf.getTransparentRemoteAddress();
-			unsigned int remoteport = conf.getTransparentRemotePort();
-			unsigned int localport  = conf.getTransparentLocalPort();
-			unsigned int frametype  = conf.getTransparentSendFrameType();
-			serial = new CTransparentDataPort(enabled, address, remoteport, localport, frametype);
+			bool enabled              = conf.getTransparentEnabled();
+			std::string remoteaddress = conf.getTransparentRemoteAddress();
+			unsigned int remoteport   = conf.getTransparentRemotePort();
+			std::string localaddress  = conf.getTransparentLocalAddress();
+			unsigned int localport    = conf.getTransparentLocalPort();
+			unsigned int frametype    = conf.getTransparentSendFrameType();
+			serial = new CTransparentDataPort(enabled, remoteaddress, remoteport, localaddress, localport, frametype);
 		}
 		else
 			serial = new CSerialController(port, 115200);
@@ -291,12 +292,13 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 
 		ISerialPort* serial = NULL;
 		if (port == "modem") {
-			bool enabled            = conf.getTransparentEnabled();
-			std::string address     = conf.getTransparentRemoteAddress();
-			unsigned int remoteport = conf.getTransparentRemotePort();
-			unsigned int localport  = conf.getTransparentLocalPort();
-			unsigned int frametype  = conf.getTransparentSendFrameType();
-			serial = new CTransparentDataPort(enabled, address, remoteport, localport, frametype);
+			bool enabled              = conf.getTransparentEnabled();
+			std::string remoteaddress = conf.getTransparentRemoteAddress();
+			unsigned int remoteport   = conf.getTransparentRemotePort();
+			std::string localaddress  = conf.getTransparentLocalAddress();
+			unsigned int localport    = conf.getTransparentLocalPort();
+			unsigned int frametype    = conf.getTransparentSendFrameType();
+			serial = new CTransparentDataPort(enabled, remoteaddress, remoteport, localaddress, localport, frametype);
 		}
 		else
 			serial = new CSerialController(port, baudrate);

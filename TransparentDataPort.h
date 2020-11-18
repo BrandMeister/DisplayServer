@@ -26,7 +26,7 @@
 
 class CTransparentDataPort : public ISerialPort {
 public:
-	CTransparentDataPort(bool enabled, const std::string& address, unsigned int remoteport, unsigned int localport, unsigned int frametype);
+	CTransparentDataPort(bool enabled, const std::string& remoteaddress, unsigned int remoteport, const std::string& localaddress, unsigned int localport, unsigned int frametype);
 	virtual ~CTransparentDataPort();
 
 	virtual bool open() override;
@@ -40,8 +40,9 @@ public:
 private:
 	CUDPSocket*      m_socket;
 	bool             m_enabled;
-	std::string      m_address;
+	std::string      m_remoteaddress;
 	unsigned int     m_remoteport;
+	std::string      m_localaddress;
 	unsigned int     m_localport;
 	sockaddr_storage m_addr;
 	unsigned int     m_addrLen;

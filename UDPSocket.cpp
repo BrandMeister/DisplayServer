@@ -171,7 +171,7 @@ bool CUDPSocket::open(const unsigned int index, const unsigned int af, const std
 			return false;
 		}
 
-		LogInfo("Opening UDP port on %u", port);
+		LogInfo("Opening UDP port on %s:%u", address.c_str(), port);
 	}
 
 	return true;

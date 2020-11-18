@@ -24,11 +24,12 @@
 
 #include <string.h>
 
-CTransparentDataPort::CTransparentDataPort(bool enabled, const std::string& address, unsigned int remoteport, unsigned int localport, unsigned int frametype) :
+CTransparentDataPort::CTransparentDataPort(bool enabled, const std::string& remoteaddress, unsigned int remoteport, const std::string& localaddress, unsigned int localport, unsigned int frametype) :
 m_socket(),
 m_enabled(enabled),
-m_address(address),
+m_remoteaddress(remoteaddress),
 m_remoteport(remoteport),
+m_localaddress(localaddress),
 m_localport(localport),
 m_addr(),
 m_addrLen(0U),
@@ -50,7 +51,7 @@ bool CTransparentDataPort::open()
 	        LogInfo("Display, SendFrameType should be 1");
 		return false;
 	}
-	if (CUDPSocket::lookup(m_address, m_localport, m_addr, m_addrLen) != 0) {
+	if (CUDPSocket::lookup(m_localaddress, m_localport, m_addr, m_addrLen) != 0) {
 		LogError("Display, Unable to resolve the address of the Transparent data source");
 		return false;
 	}
@@ -58,7 +59,7 @@ bool CTransparentDataPort::open()
         LogInfo("Display, opening Transparent data socket");
 
 	m_socket = new CUDPSocket(m_remoteport);
-	return m_socket->open(m_addr);
+	return m_socket->open(0, m_addr.ss_family, m_remoteaddress, m_remoteport);
 }
 
 int CTransparentDataPort::write(const unsigned char* data, unsigned int length)
