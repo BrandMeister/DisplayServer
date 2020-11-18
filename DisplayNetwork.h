@@ -26,7 +26,7 @@
 
 class CDisplayNetwork {
 public:
-	CDisplayNetwork(const std::string& address, unsigned int port, bool debug);
+	CDisplayNetwork(const std::string& address, unsigned int port, bool trace);
 	~CDisplayNetwork();
 
 	bool open();
@@ -41,5 +41,5 @@ private:
 	sockaddr_storage m_addr;
         unsigned int     m_addrLen;
 	unsigned short   m_port;
-	bool             m_debug;
+	bool             m_trace;
 };

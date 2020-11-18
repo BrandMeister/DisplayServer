@@ -46,6 +46,7 @@ public:
   unsigned int getDisplayServerPort() const;
   std::string  getDisplayServerType() const;
   bool         getDisplayServerDebug() const;
+  bool         getDisplayServerTrace() const;
   unsigned int getLogLevel() const;
 
   // The Transparent Data section
@@ -102,6 +103,7 @@ private:
   unsigned int m_displayServerPort;
   std::string  m_displayServerType;
   bool         m_displayServerDebug;
+  bool         m_displayServerTrace;
 
   unsigned int m_rxFrequency;
   unsigned int m_txFrequency;

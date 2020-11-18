@@ -71,7 +71,9 @@ int main(int argc, char** argv)
 CDisplayServer::CDisplayServer(const std::string& file) :
 m_conf(file),
 m_display(NULL),
-m_dmrLookup(NULL)
+m_dmrLookup(NULL),
+m_debug(false),
+m_trace(false)
 {
 	CUDPSocket::startup();
 }
@@ -105,6 +107,8 @@ void CDisplayServer::run()
 
 	std::string lookupFile  = m_conf.getDMRIdLookupFile();
 	unsigned int reloadTime = m_conf.getDMRIdLookupTime();
+	bool m_debug            = m_conf.getDisplayServerDebug();
+	bool m_trace            = m_conf.getDisplayServerTrace();
 
 	LogInfo("DMR Id Lookups");
 	LogInfo("    File: %s", lookupFile.length() > 0U ? lookupFile.c_str() : "None");
@@ -116,7 +120,7 @@ void CDisplayServer::run()
 
 	m_display->setIdle();
 
-	CDisplayNetwork network(m_conf.getDisplayServerAddress(), m_conf.getDisplayServerPort(), m_conf.getDisplayServerDebug());
+	CDisplayNetwork network(m_conf.getDisplayServerAddress(), m_conf.getDisplayServerPort(), m_trace);
 
 	ret = network.open();
 	if (!ret) {
@@ -134,6 +138,8 @@ void CDisplayServer::run()
 			switch (buffer[0]) {
 			case 0x01U: // idle
 				m_display->setIdle();
+				if (m_debug)
+					LogMessage(".... setIdle");
 				break;
 			case 0x02U: { // error
 				unsigned int count = buffer[1U];
@@ -145,11 +151,14 @@ void CDisplayServer::run()
 				text[count] = 0U;
 
 				m_display->setError(text);
-				//LogMessage(".... setError text %s", text);
+				if (m_debug)
+					LogMessage(".... setError text %s", text);
 				}
 				break;
 			case 0x03U: // quit
 				m_display->setQuit();
+				if (m_debug)
+					LogMessage(".... setQuit");
 				break;
 			case 0x04U: { // write dmr
 				unsigned int slotNo = buffer[1];
@@ -167,7 +176,8 @@ void CDisplayServer::run()
 				type[1] = 0U;
 
 				m_display->writeDMR(slotNo, src, group, dst, type);
-				//LogMessage(".... writeDMR src %s dst %s group %d type %s", src.c_str(), dst.c_str(), group, type);
+				if (m_debug)
+					LogMessage(".... writeDMR src %s dst %s group %d type %s", src.c_str(), dst.c_str(), group, type);
 				}
 				break;
 			case 0x05U: { // dmr rssi
@@ -175,7 +185,8 @@ void CDisplayServer::run()
 				unsigned int rssi = buffer[2U];
 
 				m_display->writeDMRRSSI(slotNo, rssi);
-				//LogMessage(".... writeDMRRSSI slotNo %u rssi %u", slotNo, rssi);
+				if (m_debug)
+					LogMessage(".... writeDMRRSSI slotNo %u rssi %u", slotNo, rssi);
 				}
 				break;
 			case 0x06U: { // dmr ta
@@ -194,7 +205,8 @@ void CDisplayServer::run()
 				talkerAlias[count] = 0U;
 
 				m_display->writeDMRTA(slotNo, talkerAlias, type);
-				//LogMessage(".... writeDMRTA slotNo %u type %s ta %s", slotNo, type, talkerAlias);
+				if (m_debug)
+					LogMessage(".... writeDMRTA slotNo %u type %s ta %s", slotNo, type, talkerAlias);
 				}
 				break;
 			case 0x07U: { // dmr ber
@@ -210,13 +222,15 @@ void CDisplayServer::run()
 
 				float ber = atof(_ber);
 				m_display->writeDMRBER(slotNo, ber);
-				//LogMessage(".... writeDMRBER slotNo %u %f", slotNo, ber);
+				if (m_debug)
+					LogMessage(".... writeDMRBER slotNo %u %f", slotNo, ber);
 				}
 				break;
 			case 0x08U: { // clear dmr
 				unsigned int slotNo = buffer[1U];
 				m_display->clearDMR(slotNo);
-				//LogMessage(".... clearDMR slotNo %u", slotNo);
+				if (m_debug)
+					LogMessage(".... clearDMR slotNo %u", slotNo);
 				}
 				break;
 			case 0x09U: { // write pocsag
@@ -233,16 +247,23 @@ void CDisplayServer::run()
 				std::string message(buf, count);
 
 				m_display->writePOCSAG(ric, message.c_str());
-				//LogMessage(".... writePOCSSAG ric %u message %s", ric, message.c_str());
+				if (m_debug)
+					LogMessage(".... writePOCSSAG ric %u message %s", ric, message.c_str());
 				}
 				break;
 			case 0x0AU: // clear pocsag
 				m_display->clearPOCSAG();
+				if (m_debug)
+					LogMessage(".... clearPOCSAG");
 				break;
 			case 0x0BU: // write cw
 				m_display->writeCW();
+				if (m_debug)
+					LogMessage(".... writeCW");
 				break;
 			case 0x0CU: // clear cw
+				if (m_debug)
+					LogMessage(".... clearCW");
 				m_display->setIdle();
 				break;
 			case 0x0DU: // close

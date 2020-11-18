@@ -47,4 +47,6 @@ private:
 	CConf           m_conf;
 	CDisplay*       m_display;
 	CDMRLookup*     m_dmrLookup;
+	bool            m_debug;
+	bool            m_trace;
 };

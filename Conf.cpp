@@ -214,6 +214,8 @@ bool CConf::read()
 			m_logLevel = (unsigned int)::atoi(value);
 		else if (::strcmp(key, "Debug") == 0)
 			m_displayServerDebug = ::atoi(value) == 1;
+		else if (::strcmp(key, "Trace") == 0)
+			m_displayServerTrace = ::atoi(value) == 1;
 	} else if (section == SECTION_TFTSERIAL) {
 		if (::strcmp(key, "Port") == 0)
 			m_tftSerialPort = value;
@@ -471,4 +473,9 @@ std::string CConf::getDisplayServerType() const
 bool CConf::getDisplayServerDebug() const
 {
 	return m_displayServerDebug;
+}
+
+bool CConf::getDisplayServerTrace() const
+{
+	return m_displayServerTrace;
 }

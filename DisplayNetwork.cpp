@@ -24,12 +24,12 @@
 #include <cassert>
 #include <cstring>
 
-CDisplayNetwork::CDisplayNetwork(const std::string& address, unsigned int port, bool debug) :
+CDisplayNetwork::CDisplayNetwork(const std::string& address, unsigned int port, bool trace) :
 m_addressStr(address),
 m_addr(),
 m_addrLen(0U),
 m_port(port),
-m_debug(debug)
+m_trace(trace)
 {
 }
 
@@ -55,8 +55,8 @@ unsigned int CDisplayNetwork::readData(unsigned char* data, unsigned int length,
 	if (len <= 0)
 		return 0U;
 
-	if (m_debug)
-		CUtils::dump(1U, "Display Network Data Received", data, len);
+	if (m_trace)
+		CUtils::dump(1U, "Network Received", data, len);
 
 	return len;
 }
