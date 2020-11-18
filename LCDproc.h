@@ -22,6 +22,7 @@
 #include "Display.h"
 #include "Timer.h"
 
+#include <sys/types.h>
 #include <string>
 
 #define BUFFER_MAX_LEN 128
