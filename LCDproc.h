@@ -24,6 +24,8 @@
 
 #include <string>
 
+#define BUFFER_MAX_LEN 128
+
 class CLCDproc : public CDisplay
 {
 public:
@@ -67,4 +69,16 @@ private:
 
 	int  socketPrintf(int fd, const char *format, ...);
 	void defineScreens();
+
+	int            m_socketfd;
+	char           m_buffer[BUFFER_MAX_LEN];
+	fd_set         m_readfds, m_writefds;
+	struct timeval m_timeout;
+	int            m_recvsize;
+	unsigned int   m_rows;
+	unsigned int   m_cols;
+	bool           m_screensDefined;
+	bool           m_connected;
+	char           m_displayBuffer1[BUFFER_MAX_LEN];
+	char           m_displayBuffer2[BUFFER_MAX_LEN];
 };

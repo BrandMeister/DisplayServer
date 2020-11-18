@@ -50,21 +50,6 @@
 #include <unistd.h>
 #include <stdarg.h>
 
-#define BUFFER_MAX_LEN 128
-
-int            m_socketfd;
-char           m_buffer[BUFFER_MAX_LEN];
-fd_set         m_readfds, m_writefds;
-struct timeval m_timeout;
-int            m_recvsize;
-unsigned int   m_rows(0);
-unsigned int   m_cols(0);
-bool           m_screensDefined(false);
-bool           m_connected(false);
-
-char           m_displayBuffer1[BUFFER_MAX_LEN];
-char           m_displayBuffer2[BUFFER_MAX_LEN];
-
 const unsigned int DMR_RSSI_COUNT   = 4U;		// 4 * 360ms = 1440ms
 
 CLCDproc::CLCDproc(const std::string address, unsigned int port, unsigned int localPort, const std::string& callsign, unsigned int dmrid, bool displayClock, bool utc, bool duplex, bool dimOnIdle) :
@@ -82,7 +67,18 @@ m_dimOnIdle(dimOnIdle),
 m_dmr(false),
 m_clockDisplayTimer(1000U, 0U, 250U),   // Update the clock display every 250ms
 m_rssiCount1(0U),
-m_rssiCount2(0U)
+m_rssiCount2(0U),
+m_socketfd(),
+m_buffer(),
+m_readfds(), m_writefds(),
+m_timeout(),
+m_recvsize(),
+m_rows(0),
+m_cols(0),
+m_screensDefined(false),
+m_connected(false),
+m_displayBuffer1(),
+m_displayBuffer2()
 {
 }
 
