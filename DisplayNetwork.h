@@ -25,21 +25,21 @@
 #include <string>
 
 class CDisplayNetwork {
-public:
-	CDisplayNetwork(const std::string& address, unsigned int port, bool trace);
-	~CDisplayNetwork();
+  public:
+    CDisplayNetwork(const std::string& address, unsigned int port, bool trace);
+    ~CDisplayNetwork();
 
-	bool open();
+    bool open();
 
-	unsigned int readData(unsigned char* data, unsigned int length, sockaddr_storage& addr, unsigned int& addrLen);
+    unsigned int readData(unsigned char* data, unsigned int length, sockaddr_storage& addr, unsigned int& addrLen);
 
-	void close();
+    void close();
 
-private:
-	CUDPSocket       m_socket;
-	std::string      m_addressStr;
-	sockaddr_storage m_addr;
-        unsigned int     m_addrLen;
-	unsigned short   m_port;
-	bool             m_trace;
+  private:
+    CUDPSocket       m_socket;
+    std::string      m_addressStr;
+    sockaddr_storage m_addr;
+    unsigned int     m_addrLen;
+    unsigned short   m_port;
+    bool             m_trace;
 };
