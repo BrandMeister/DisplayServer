@@ -102,6 +102,15 @@ void CDisplayServer::run()
     CTimer pollTimer(1000U, 5U);
     pollTimer.start();
 
+    LogInfo("DisplayServer is free software; you can redistribute it and/or modify");
+    LogInfo("it under the terms of the GNU General Public License as published by");
+    LogInfo("the Free Software Foundation; either version 2 of the License, or (at");
+    LogInfo("your option) any later version");
+    LogInfo("");
+    LogInfo("Copyright(C) 2015-2020 by Jonathan Naylor, G4KLX and others");
+    LogInfo("Copyright(C) 2020-present by BrandMeister");
+    LogInfo("");
+
     LogMessage("Starting DisplayServer-%s git #%.10s", VERSION, gitversion);
 
     CTimer watchdogTimer(1000U, 0U, 1500U);
