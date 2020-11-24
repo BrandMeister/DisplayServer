@@ -171,6 +171,20 @@ bool CUDPSocket::open(const unsigned int index, const unsigned int af, const std
 			return false;
 		}
 
+		if (m_af == AF_INET) {
+			uint32_t ip = ntohl(((struct sockaddr_in*)&addr)->sin_addr.s_addr);
+			if ((ip & 0xF0000000) == 0xE0000000) {
+				LogDebug("Address %s is a multicast address, setsockopt(IP_ADD_MEMBERSHIP)", address.c_str());
+				struct ip_mreq mreq;
+				mreq.imr_multiaddr.s_addr = inet_addr(address.c_str());
+				mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+				if (setsockopt(m_fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+					LogError("Cannot setsockopt ... IP_ADD_MEMBERSHIP");
+					return false;
+				}
+			}
+		}
+
 		LogInfo("Opening UDP port on %s:%u", address.c_str(), port);
 	}
 
