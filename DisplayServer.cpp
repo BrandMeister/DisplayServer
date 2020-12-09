@@ -77,12 +77,10 @@ CDisplayServer::CDisplayServer(const std::string& file) :
     m_debug(false),
     m_trace(false)
 {
-    CUDPSocket::startup();
 }
 
 CDisplayServer::~CDisplayServer()
 {
-    CUDPSocket::shutdown();
 }
 
 void CDisplayServer::run()
