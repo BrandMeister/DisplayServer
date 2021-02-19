@@ -48,6 +48,7 @@ public:
   bool         getDisplayServerDebug() const;
   bool         getDisplayServerTrace() const;
   unsigned int getLogLevel() const;
+  bool         getSyslog() const;
 
   // The Transparent Data section
   bool         getTransparentEnabled() const;
@@ -119,6 +120,7 @@ private:
   unsigned int m_dmrIdLookupTime;
 
   unsigned int m_logLevel;
+  bool         m_syslog;
 
   unsigned int m_dmrId;
 

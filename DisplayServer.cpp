@@ -92,7 +92,7 @@ void CDisplayServer::run()
         return;
     }
 
-    ::LogInitialise(m_conf.getLogLevel());
+    ::LogInitialise(m_conf.getLogLevel(), m_conf.getSyslog());
 
     CStopWatch stopWatch;
     stopWatch.start();

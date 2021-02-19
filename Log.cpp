@@ -26,14 +26,17 @@
 #include <ctime>
 #include <cassert>
 #include <cstring>
+#include <syslog.h>
 
+bool m_syslog = false;
 static unsigned int m_displayLevel = 2U;
 
 static char LEVELS[] = " DMIWEF";
 
-void LogInitialise(unsigned int displayLevel)
+void LogInitialise(unsigned int displayLevel, bool syslog)
 {
 	m_displayLevel = displayLevel;
+	m_syslog = syslog;
 }
 
 void LogFinalise()
@@ -60,6 +63,8 @@ void Log(unsigned int level, const char* fmt, ...)
 	va_end(vl);
 
 	if (level >= m_displayLevel && m_displayLevel != 0U) {
+		if (m_syslog)
+			syslog(LOG_INFO, "DisplayServer: %s\n", buffer);
 		::fprintf(stdout, "%s\n", buffer);
 		::fflush(stdout);
 	}

@@ -29,5 +29,5 @@
 
 extern void Log(unsigned int level, const char* fmt, ...);
 
-extern void LogInitialise(unsigned int displayLevel);
+extern void LogInitialise(unsigned int displayLevel, bool syslog);
 extern void LogFinalise();

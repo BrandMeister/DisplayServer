@@ -62,6 +62,7 @@ m_transparentSendFrameType(0U),
 m_dmrIdLookupFile(),
 m_dmrIdLookupTime(0U),
 m_logLevel(),
+m_syslog(false),
 m_dmrId(0U),
 m_dmrNetworkSlot1(true),
 m_dmrNetworkSlot2(true),
@@ -213,6 +214,8 @@ bool CConf::read()
 			m_displayServerType = value;
 		else if (::strcmp(key, "LogLevel") == 0)
 			m_logLevel = (unsigned int)::atoi(value);
+		else if (::strcmp(key, "Syslog") == 0)
+			m_syslog = ::atoi(value) == 1;
 		else if (::strcmp(key, "Debug") == 0)
 			m_displayServerDebug = ::atoi(value) == 1;
 		else if (::strcmp(key, "Trace") == 0)
@@ -294,6 +297,11 @@ unsigned int CConf::getTXFrequency() const
 unsigned int CConf::getLogLevel() const
 {
 	return m_logLevel;
+}
+
+bool CConf::getSyslog() const
+{
+	return m_syslog;
 }
 
 bool CConf::getTransparentEnabled() const
