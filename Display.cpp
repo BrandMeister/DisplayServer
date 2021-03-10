@@ -336,7 +336,7 @@ CDisplay* CDisplay::createDisplay(const CConf& conf)
 		bool          rotate     = conf.getOLEDRotate();
 		bool          logosaver  = conf.getOLEDLogoScreensaver();
 
-		display = new COLED(oledtype, brightness, invert, scroll, rotate, logosaver, conf.getDMRNetworkSlot1(), conf.getDMRNetworkSlot2());
+		display = new COLED(oledtype, brightness, invert, scroll, rotate, logosaver, conf.getDuplex());
 #endif
 	} else {
 		LogWarning("No valid display found, disabling");
