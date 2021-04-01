@@ -26,14 +26,12 @@
 CUDPSocket::CUDPSocket(const std::string& address, unsigned int port) :
 m_address(address),
 m_port(port),
-m_af(0U),
 m_fd(-1)
 {
 }
 
 CUDPSocket::CUDPSocket(unsigned int port) :
 m_port(port),
-m_af(0U),
 m_fd(-1)
 {
 }
@@ -118,10 +116,10 @@ bool CUDPSocket::match(const sockaddr_storage& addr1, const sockaddr_storage& ad
 
 bool CUDPSocket::open(unsigned int af)
 {
-	return open(0, af, m_address, m_port);
+	return open(af, m_address, m_port);
 }
 
-bool CUDPSocket::open(const unsigned int index, const unsigned int af, const std::string& address, const unsigned int port)
+bool CUDPSocket::open(const unsigned int af, const std::string& address, const unsigned int port)
 {
 	sockaddr_storage addr;
 	unsigned int addrlen;
@@ -144,8 +142,6 @@ bool CUDPSocket::open(const unsigned int index, const unsigned int af, const std
 		return false;
 	}
 
-	m_af = addr.ss_family;
-
 	if (port > 0U) {
 		int reuse = 1;
 		if (::setsockopt(m_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse, sizeof(reuse)) == -1) {
@@ -158,7 +154,7 @@ bool CUDPSocket::open(const unsigned int index, const unsigned int af, const std
 			return false;
 		}
 
-		if (m_af == AF_INET) {
+		if (addr.ss_family == AF_INET) {
 			uint32_t ip = ntohl(((struct sockaddr_in*)&addr)->sin_addr.s_addr);
 			if ((ip & 0xF0000000) == 0xE0000000) {
 				LogDebug("Address %s is a multicast address, setsockopt(IP_ADD_MEMBERSHIP)", address.c_str());

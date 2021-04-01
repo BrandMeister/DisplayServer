@@ -43,7 +43,7 @@ bool CDisplayNetwork::open()
 
     CUDPSocket::lookup(m_addressStr, m_port, m_addr, m_addrLen);
 
-    return m_socket.open(0, m_addr.ss_family, m_addressStr, m_port);
+    return m_socket.open(m_addr.ss_family, m_addressStr, m_port);
 }
 
 unsigned int CDisplayNetwork::readData(unsigned char* data, unsigned int length, sockaddr_storage& addr, unsigned int& addrLen)

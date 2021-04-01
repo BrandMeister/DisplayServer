@@ -61,7 +61,7 @@ bool CTransparentDataPort::open()
     LogInfo("Display, opening Transparent data socket");
 
     m_socket = new CUDPSocket(m_remoteport);
-    return m_socket->open(0, m_addr.ss_family, m_remoteaddress, m_remoteport);
+    return m_socket->open(m_addr.ss_family, m_remoteaddress, m_remoteport);
 }
 
 int CTransparentDataPort::write(const unsigned char* data, unsigned int length)
