@@ -51,7 +51,7 @@
 
 const unsigned int DMR_RSSI_COUNT   = 4U;		// 4 * 360ms = 1440ms
 
-CLCDproc::CLCDproc(const std::string address, unsigned int port, unsigned int localPort, const std::string& callsign, unsigned int dmrid, bool displayClock, bool utc, bool duplex, bool dimOnIdle) :
+CLCDproc::CLCDproc(const std::string address, unsigned int port, unsigned short localPort, const std::string& callsign, unsigned int dmrid, bool displayClock, bool utc, bool duplex, bool dimOnIdle) :
 CDisplay(),
 m_address(address),
 m_port(port),

@@ -190,11 +190,11 @@ bool CConf::read()
 		else if (::strcmp(key, "RemoteAddress") == 0)
 			m_transparentRemoteAddress = value;
 		else if (::strcmp(key, "RemotePort") == 0)
-			m_transparentRemotePort = (unsigned int)::atoi(value);
+			m_transparentRemotePort = (unsigned short)::atoi(value);
 		else if (::strcmp(key, "LocalAddress") == 0)
 			m_transparentLocalAddress = value;
 		else if (::strcmp(key, "LocalPort") == 0)
-			m_transparentLocalPort = (unsigned int)::atoi(value);
+			m_transparentLocalPort = (unsigned short)::atoi(value);
 		else if (::strcmp(key, "SendFrameType") == 0)
 			m_transparentSendFrameType = (unsigned int)::atoi(value);
 	} else if (section == SECTION_DMR) {
@@ -257,9 +257,9 @@ bool CConf::read()
 		if (::strcmp(key, "Address") == 0)
 			m_lcdprocAddress = value;
 		else if (::strcmp(key, "Port") == 0)
-			m_lcdprocPort = (unsigned int)::atoi(value);
+			m_lcdprocPort = (unsigned short)::atoi(value);
 		else if (::strcmp(key, "LocalPort") == 0)
-			m_lcdprocLocalPort = (unsigned int)::atoi(value);
+			m_lcdprocLocalPort = (unsigned short)::atoi(value);
 		else if (::strcmp(key, "DisplayClock") == 0)
 			m_lcdprocDisplayClock = ::atoi(value) == 1;
 		else if (::strcmp(key, "UTC") == 0)
@@ -314,7 +314,7 @@ std::string CConf::getTransparentRemoteAddress() const
 	return m_transparentRemoteAddress;
 }
 
-unsigned int CConf::getTransparentRemotePort() const
+unsigned short CConf::getTransparentRemotePort() const
 {
 	return m_transparentRemotePort;
 }
@@ -324,7 +324,7 @@ std::string CConf::getTransparentLocalAddress() const
 	return m_transparentLocalAddress;
 }
 
-unsigned int CConf::getTransparentLocalPort() const
+unsigned short CConf::getTransparentLocalPort() const
 {
 	return m_transparentLocalPort;
 }
@@ -434,12 +434,12 @@ std::string CConf::getLCDprocAddress() const
 	return m_lcdprocAddress;
 }
 
-unsigned int CConf::getLCDprocPort() const
+unsigned short CConf::getLCDprocPort() const
 {
 	return m_lcdprocPort;
 }
 
-unsigned int CConf::getLCDprocLocalPort() const
+unsigned short CConf::getLCDprocLocalPort() const
 {
 	return m_lcdprocLocalPort;
 }

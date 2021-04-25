@@ -53,9 +53,9 @@ public:
   // The Transparent Data section
   bool         getTransparentEnabled() const;
   std::string  getTransparentRemoteAddress() const;
-  unsigned int getTransparentRemotePort() const;
+  unsigned short getTransparentRemotePort() const;
   std::string  getTransparentLocalAddress() const;
-  unsigned int getTransparentLocalPort() const;
+  unsigned short getTransparentLocalPort() const;
   unsigned int getTransparentSendFrameType() const;
 
   // The DMR section
@@ -88,8 +88,8 @@ public:
 
   // The LCDproc section
   std::string  getLCDprocAddress() const;
-  unsigned int getLCDprocPort() const;
-  unsigned int getLCDprocLocalPort() const;
+  unsigned short getLCDprocPort() const;
+  unsigned short getLCDprocLocalPort() const;
   bool         getLCDprocDisplayClock() const;
   bool         getLCDprocUTC() const;
   bool         getLCDprocDimOnIdle() const;
@@ -111,9 +111,9 @@ private:
 
   bool         m_transparentEnabled;
   std::string  m_transparentRemoteAddress;
-  unsigned int m_transparentRemotePort;
+  unsigned short m_transparentRemotePort;
   std::string  m_transparentLocalAddress;
-  unsigned int m_transparentLocalPort;
+  unsigned short m_transparentLocalPort;
   unsigned int m_transparentSendFrameType;
 
   std::string  m_dmrIdLookupFile;
@@ -146,8 +146,8 @@ private:
   bool          m_oledLogoScreensaver;
 
   std::string  m_lcdprocAddress;
-  unsigned int m_lcdprocPort;
-  unsigned int m_lcdprocLocalPort;
+  unsigned short m_lcdprocPort;
+  unsigned short m_lcdprocLocalPort;
   bool         m_lcdprocDisplayClock;
   bool         m_lcdprocUTC;
   bool         m_lcdprocDimOnIdle;
